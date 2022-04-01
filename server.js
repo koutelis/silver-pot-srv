@@ -43,15 +43,15 @@ app.get('/', (request, response) => {
 
 app.get(infoUri, (request, response, next) => {
     Foods
-    .findAll()
-    .then(fd => {
-        const output =`
-        <p>SilverPot contains ${fd.length} menu options</p>
-        <p>${new Date().toLocaleString()}</p>
-        `;
-        response.send(output);
-    })
-    .catch(err => next(err));
+        .findAll()
+        .then(fd => {
+            const output =`
+            <p>SilverPot contains ${fd.length} menu options</p>
+            <p>${new Date().toLocaleString()}</p>
+            `;
+            response.send(output);
+        })
+        .catch(err => next(err));
 });
 
 //#endregion

@@ -3,7 +3,7 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { MongoManager, Foods }  = require('./mongodb');
+const { MongoManager, Foods, Drinks, RestaurantMenu }  = require('./mongodb');
 const { global_variables } = require('./config');
 
 const app = express();
@@ -11,6 +11,7 @@ const baseUri = '/api/'
 const infoUri = '/info/';
 const foodsUri = `${baseUri}foods/`;
 const drinksUri = `${baseUri}drinks/`;
+const menuUri = `${baseUri}menu/`;
 const dbManager = new MongoManager();
 dbManager.connect();
 
@@ -43,7 +44,7 @@ app.get('/', (request, response) => {
 
 app.get(infoUri, (request, response, next) => {
     Foods
-        .findAll()
+        .find()
         .then(fd => {
             const output =`
             <p>SilverPot contains ${fd.length} menu options</p>
@@ -87,7 +88,8 @@ app.put(foodsUri + ':id', (request, response, next) => {
 })
 
 app.delete(foodsUri + ':id', (request, response, next) => {
-    Foods.deleteOne(request.params.id)
+    Foods
+        .deleteOne(request.params.id)
         .then(found => found ? response.status(204).end() : response.status(404).end())
         .catch(err => next(err));
 })
@@ -96,17 +98,58 @@ app.delete(foodsUri + ':id', (request, response, next) => {
 
 //#region "HTTP REQUESTs: DRINKS ENDPOINTS"
 
-app.get(drinksUri, (request, response, next) => {});
+app.get(drinksUri, (request, response, next) => {
+    Drinks
+        .find()
+        .then(fd => response.json(fd))
+        .catch(err => next(err))
+});
 
-app.get(drinksUri + ':id', (request, response, next) => {})
+app.get(drinksUri + ':id', (request, response, next) => {
+    Drinks
+        .findOne(request.params.id)
+        .then(fd => fd ? response.json(fd) : response.status(404).end())
+        .catch(err => next(err));
+})
 
-app.post(drinksUri, (request, response, next) => {})
+app.post(drinksUri, (request, response, next) => {
+    Drinks
+        .addOne(request.body)
+        .then(posted => response.json(posted))
+        .catch(err => next(err));
+})
 
-app.put(drinksUri, (request, response, next) => {})
+app.put(drinksUri + ':id', (request, response, next) => {
+    Drinks
+        .editOne(request.params.id, request.body)
+        .then(found => found ? response.json(found) : response.status(404).end())
+        .catch(err => next(err));
+})
 
-app.put(drinksUri + ':id', (request, response, next) => {})
+app.delete(drinksUri + ':id', (request, response, next) => {
+    Drinks
+        .deleteOne(request.params.id)
+        .then(found => found ? response.status(204).end() : response.status(404).end())
+        .catch(err => next(err));
+})
 
-app.delete(drinksUri + ':id', (request, response, next) => {})
+//#endregion
+
+//#region "HTTP REQUESTs: RESTAURANTMENU ENDPOINTS"
+
+app.get(menuUri, (request, response, next) => {
+    RestaurantMenu
+        .findOne()
+        .then(fd => response.json(fd))
+        .catch(err => next(err))
+});
+
+app.post(menuUri, (request, response, next) => {
+    RestaurantMenu
+        .addOne(request.body)
+        .then(posted => response.json(posted))
+        .catch(err => next(err));
+})
 
 //#endregion
 
@@ -136,5 +179,4 @@ app.use(cbAppError)
 
 // REST API SERVER LISTENER
 const PORT = global_variables.port || 3001;
-const appStartCB = () => console.log(`Silver Pot REST API server running on port ${PORT}`);
-app.listen(PORT, appStartCB);
+app.listen(PORT);

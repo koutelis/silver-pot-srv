@@ -1,7 +1,8 @@
 {
-  "name": "silver-pot",
-  "version": "0.1.0",
-  "license": "UNLICENSED",
+  "name": "silver-pot-srv",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",

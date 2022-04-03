@@ -66,7 +66,7 @@ const mongoose = require('mongoose');
     }
 
     static find = () => {
-        return Foods.Model.find({});
+        return Foods.Model.find({}).sort({category: 'asc', title: 'asc'});
     }
 
     static findOne = (id) => {

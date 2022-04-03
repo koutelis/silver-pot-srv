@@ -12,10 +12,11 @@ class Drinks {
                 category: {type: String, required: true},
                 title: {type: String, required: true, unique: true},
                 description: {type: String},
-                basePrice: {type: Number, required: true},
-                size: {             // when a size is !null, implies the regular (basePrice) changes accordingly
-                    small: Number,  // negative number to be added to basePrice and produce a lower amount
-                    large: Number   // positive number to be added to basePrice
+                basePrice: {type: Number},
+                sizes: {             
+                    small: Number,
+                    regular: Number, // if !null, the regular (basePrice) is overriden to match this value
+                    large: Number
                 },
                 timeRanges: [
                     {
@@ -47,16 +48,24 @@ class Drinks {
     }
 
     static find = () => {
-        return Drinks.Model.find({});
+        return Drinks.Model.find({}).sort({category: 'asc', title: 'asc'});
     }
 
     static findOne = (id) => {
         return Drinks.Model.find({_id: id});
     }
 
-    static postOne = (drinkJson) => {
+    static addOne = (drinkJson) => {
         const drinkDoc = new Drinks.Model(drinkJson);
         return drinkDoc.save();
+    }
+
+    static editOne = (id, drinkJson) => {
+        return Drinks.Model.findByIdAndUpdate(id, drinkJson);
+    }
+
+    static deleteOne = (id) => {
+        return Drinks.Model.findByIdAndRemove(id);
     }
 }
 

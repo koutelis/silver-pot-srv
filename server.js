@@ -11,7 +11,7 @@ const baseUri = '/api/'
 const infoUri = '/info/';
 const foodsUri = `${baseUri}foods/`;
 const drinksUri = `${baseUri}drinks/`;
-const menuUri = `${baseUri}menu/`;
+const menuUri = `${baseUri}menus/`;
 const dbManager = new MongoManager();
 dbManager.connect();
 

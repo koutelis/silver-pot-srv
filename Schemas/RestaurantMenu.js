@@ -14,7 +14,8 @@ const mongoose = require('mongoose');
         (function initSchema() {
             const schemaDefintion = {
                 _id: String,
-                items: []
+                items: [],
+                fontSize: Number
             }
 
             RestaurantMenu.Schema = new mongoose.Schema(schemaDefintion);
@@ -33,11 +34,12 @@ const mongoose = require('mongoose');
     }
 
     static findOne = () => {
-        return RestaurantMenu.Model.findOne({_id: "template"}, {items: 1, _id: 0});
+        return RestaurantMenu.Model.findOne({_id: "template"});
     }
 
     static addOne = (menuJson) => {
-        return RestaurantMenu.Model.findByIdAndUpdate("template", { items: menuJson });
+        console.log(menuJson);
+        return RestaurantMenu.Model.findByIdAndUpdate("template", menuJson);
     }
 
 }

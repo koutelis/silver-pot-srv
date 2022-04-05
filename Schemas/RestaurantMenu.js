@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
         (function initSchema() {
             const schemaDefintion = {
                 _id: String,
-                items: [],
+                items: {},
                 fontSize: Number
             }
 

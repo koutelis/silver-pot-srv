@@ -17,22 +17,16 @@ const mongoose = require('mongoose');
                 title: {type: String, required: true, unique: true},
                 description: {type: String},
                 basePrice: {type: Number, required: true},
-                size: {             // when a size is !null, implies the regular (basePrice) changes accordingly
-                    small: Number,  // negative number to be added to basePrice and produce a lower amount
-                    large: Number   // positive number to be added to basePrice
-                },
                 addons: [
                     {
-                        title: {type: String, required: true}, 
-                        price: {type: Number, required: true},  // extra cost (added to basePrice)
-                        amount: {type: Number, required: true}
+                        name: {type: String, required: true}, 
+                        price: {type: Number, required: true}  // extra cost (added to basePrice)
                     }
                 ],
                 removables: [
                     {
-                        title: {type: String, required: true}, 
-                        price: {type: Number, required: true},  // discount (subtracted from basePrice)
-                        amount: {type: Number, required: true}
+                        name: {type: String, required: true}, 
+                        price: {type: Number, required: true}  // discount (subtracted from basePrice)
                     }
                 ],
                 timeRanges: [
@@ -57,33 +51,6 @@ const mongoose = require('mongoose');
         (function initModel() {
             Foods.Model = mongoose.model('foods', Foods.Schema);
         })(); 
-    }
-
-
-    static isValid = (data) => {
-        const { category, title } = data;
-        return (category && title);
-    }
-
-    static find = () => {
-        return Foods.Model.find({}).sort({category: 'asc', title: 'asc'});
-    }
-
-    static findOne = (id) => {
-        return Foods.Model.find({_id: id});
-    }
-
-    static addOne = (foodJson) => {
-        const foodDoc = new Foods.Model(foodJson);
-        return foodDoc.save();
-    }
-
-    static editOne = (id, foodJson) => {
-        return Foods.Model.findByIdAndUpdate(id, foodJson);
-    }
-
-    static deleteOne = (id) => {
-        return Foods.Model.findByIdAndRemove(id);
     }
 }
 

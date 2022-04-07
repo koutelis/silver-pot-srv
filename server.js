@@ -43,12 +43,12 @@ app.get('/', (request, response) => {
 });
 
 app.get(infoUri, (request, response, next) => {
-    Foods
+    Foods.Model
         .find()
-        .then(fd => {
+        .then(found => {
             const output =`
-            <p>SilverPot contains ${fd.length} menu options</p>
-            <p>${new Date().toLocaleString()}</p>
+                <p>SilverPot contains ${found.length} menu options</p>
+                <p>${new Date().toLocaleString()}</p>
             `;
             response.send(output);
         })
@@ -60,37 +60,38 @@ app.get(infoUri, (request, response, next) => {
 //#region "HTTP REQUESTs: FOODS ENDPOINTS"
 
 app.get(foodsUri, (request, response, next) => {
-    Foods
-        .find()
-        .then(fd => response.json(fd))
+    Foods.Model
+        .find({})
+        .sort({category: 'asc', title: 'asc'})
+        .then(found => response.json(found))
         .catch(err => next(err))
 });
 
 app.get(foodsUri + ':id', (request, response, next) => {
-    Foods
-        .findOne(request.params.id)
-        .then(fd => fd ? response.json(fd) : response.status(404).end())
+    Foods.Model
+        .findOne({_id: request.params.id})
+        .then(found => found ? response.json(found) : response.status(404).end())
         .catch(err => next(err));
 })
 
 app.post(foodsUri, (request, response, next) => {
-    Foods
-        .addOne(request.body)
+    (new Foods.Model(request.body))
+        .save()
         .then(posted => response.json(posted))
         .catch(err => next(err));
 })
 
 app.put(foodsUri + ':id', (request, response, next) => {
-    Foods
-        .editOne(request.params.id, request.body)
-        .then(found => found ? response.json(found) : response.status(404).end())
+    Foods.Model
+        .findByIdAndUpdate(request.params.id, request.body)
+        .then(edited => edited ? response.json(edited) : response.status(404).end())
         .catch(err => next(err));
 })
 
 app.delete(foodsUri + ':id', (request, response, next) => {
-    Foods
-        .deleteOne(request.params.id)
-        .then(found => found ? response.status(204).end() : response.status(404).end())
+    Foods.Model
+        .findByIdAndRemove(request.params.id)
+        .then(deleted => deleted ? response.status(204).end() : response.status(404).end())
         .catch(err => next(err));
 })
 
@@ -99,37 +100,38 @@ app.delete(foodsUri + ':id', (request, response, next) => {
 //#region "HTTP REQUESTs: DRINKS ENDPOINTS"
 
 app.get(drinksUri, (request, response, next) => {
-    Drinks
-        .find()
-        .then(fd => response.json(fd))
+    Drinks.Model
+        .find({})
+        .sort({category: 'asc', title: 'asc'})
+        .then(found => response.json(found))
         .catch(err => next(err))
 });
 
 app.get(drinksUri + ':id', (request, response, next) => {
-    Drinks
-        .findOne(request.params.id)
-        .then(fd => fd ? response.json(fd) : response.status(404).end())
+    Drinks.Model
+        .findOne({_id: request.params.id})
+        .then(found => found ? response.json(found) : response.status(404).end())
         .catch(err => next(err));
 })
 
 app.post(drinksUri, (request, response, next) => {
-    Drinks
-        .addOne(request.body)
+    (new Drinks.Model(request.body))
+        .save()
         .then(posted => response.json(posted))
         .catch(err => next(err));
 })
 
 app.put(drinksUri + ':id', (request, response, next) => {
-    Drinks
-        .editOne(request.params.id, request.body)
-        .then(found => found ? response.json(found) : response.status(404).end())
+    Drinks.Model
+        .findByIdAndUpdate(request.params.id, request.body)
+        .then(edited => edited ? response.json(edited) : response.status(404).end())
         .catch(err => next(err));
 })
 
 app.delete(drinksUri + ':id', (request, response, next) => {
-    Drinks
-        .deleteOne(request.params.id)
-        .then(found => found ? response.status(204).end() : response.status(404).end())
+    Drinks.Model
+        .findByIdAndRemove(request.params.id)
+        .then(deleted => deleted ? response.status(204).end() : response.status(404).end())
         .catch(err => next(err));
 })
 
@@ -137,16 +139,16 @@ app.delete(drinksUri + ':id', (request, response, next) => {
 
 //#region "HTTP REQUESTs: RESTAURANTMENU ENDPOINTS"
 
-app.get(menuUri, (request, response, next) => {
-    RestaurantMenu
-        .findOne()
-        .then(fd => response.json(fd))
-        .catch(err => next(err))
-});
+app.get(menuUri + ':id', (request, response, next) => {
+    RestaurantMenu.Model
+        .findOne({_id: request.params.id})
+        .then(fd => fd ? response.json(fd) : response.status(404).end())
+        .catch(err => next(err));
+})
 
 app.post(menuUri, (request, response, next) => {
-    RestaurantMenu
-        .addOne(request.body)
+    RestaurantMenu.Model
+        .findByIdAndUpdate("template", request.body)
         .then(posted => response.json(posted))
         .catch(err => next(err));
 })

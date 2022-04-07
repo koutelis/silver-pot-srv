@@ -32,16 +32,6 @@ const mongoose = require('mongoose');
             RestaurantMenu.Model = mongoose.model('restaurantmenus', RestaurantMenu.Schema);
         })(); 
     }
-
-    static findOne = () => {
-        return RestaurantMenu.Model.findOne({_id: "template"});
-    }
-
-    static addOne = (menuJson) => {
-        console.log(menuJson);
-        return RestaurantMenu.Model.findByIdAndUpdate("template", menuJson);
-    }
-
 }
 
 module.exports = { RestaurantMenu };

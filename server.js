@@ -1,184 +1,62 @@
-'use strict';
+"use strict";
 
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-const { MongoManager, Foods, Drinks, RestaurantMenu }  = require('./mongodb');
-const { global_variables } = require('./config');
+import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import MongoManager from "./mongodb.js";
+import defaults from "./config.js";
 
 const app = express();
-const baseUri = '/api/'
-const infoUri = '/info/';
-const foodsUri = `${baseUri}foods/`;
-const drinksUri = `${baseUri}drinks/`;
-const menuUri = `${baseUri}menus/`;
+const { drinksUri, foodsUri, menusUri, port } = defaults;
 const dbManager = new MongoManager();
 dbManager.connect();
 
-//#region "MIDDLEWARE pt1"
-
 // REGISTER A JSON PARSER (MIDDLEWARE)
-app.use(express.json());  // register a json parser
-
+app.use(express.json());
 
 // CROSS-ORIGIN HANDLER (MIDDLEWARE)
 app.use(cors());
 
-
 // REQUEST LOGGER (MIDDLEWARE)
-morgan.token('postBody', function (req) {
-    return (req.method === 'POST')
-        ? JSON.stringify(req.body)
-        : ''
-});
-const requestLogger = morgan(':method :url :status :res[content-length] - :response-time ms :postBody')
+morgan.token("postBody", req => (req.method === "POST") ? JSON.stringify(req.body) : "");
+const requestLogger = morgan(":method :url :status :res[content-length] - :response-time ms :postBody");
 app.use(requestLogger);
 
-//#endregion
+app.get(foodsUri, (request, response, next) => dbManager.schemaGetAll(foodsUri, request, response, next));
+app.get(foodsUri + ":id", (request, response, next) => dbManager.schemaGetOne(foodsUri, request, response, next));
+app.put(foodsUri + ":id", (request, response, next) => dbManager.schemaPutOne(foodsUri, request, response, next));
+app.post(foodsUri, (request, response, next) => dbManager.schemaPostOne(foodsUri, request, response, next));
+app.delete(foodsUri + ":id", (request, response, next) => dbManager.schemaDeleteOne(foodsUri, request, response, next));
 
-//#region "HTTP REQUESTs: MISC ENDPOINTS"
+app.get(drinksUri, (request, response, next) => dbManager.schemaGetAll(drinksUri, request, response, next));
+app.get(drinksUri + ":id", (request, response, next) => dbManager.schemaGetOne(drinksUri, request, response, next));
+app.put(drinksUri + ":id", (request, response, next) => dbManager.schemaPutOne(drinksUri, request, response, next));
+app.post(drinksUri, (request, response, next) => dbManager.schemaPostOne(drinksUri, request, response, next));
+app.delete(drinksUri + ":id", (request, response, next) => dbManager.schemaDeleteOne(drinksUri, request, response, next));
 
-app.get('/', (request, response) => {
-    response.send('<h1>SilverPot API</h1>');
-});
+app.get(menusUri + ":id", (request, response, next) => dbManager.schemaGetOne(menusUri, request, response, next));
+app.put(menusUri + ":id", (request, response, next) => dbManager.schemaPutOne(menusUri, request, response, next));
 
-app.get(infoUri, (request, response, next) => {
-    Foods.Model
-        .find()
-        .then(found => {
-            const output =`
-                <p>SilverPot contains ${found.length} menu options</p>
-                <p>${new Date().toLocaleString()}</p>
-            `;
-            response.send(output);
-        })
-        .catch(err => next(err));
-});
-
-//#endregion
-
-//#region "HTTP REQUESTs: FOODS ENDPOINTS"
-
-app.get(foodsUri, (request, response, next) => {
-    Foods.Model
-        .find({})
-        .sort({category: 'asc', title: 'asc'})
-        .then(found => response.json(found))
-        .catch(err => next(err))
-});
-
-app.get(foodsUri + ':id', (request, response, next) => {
-    Foods.Model
-        .findOne({_id: request.params.id})
-        .then(found => found ? response.json(found) : response.status(404).end())
-        .catch(err => next(err));
-})
-
-app.post(foodsUri, (request, response, next) => {
-    (new Foods.Model(request.body))
-        .save()
-        .then(posted => response.json(posted))
-        .catch(err => next(err));
-})
-
-app.put(foodsUri + ':id', (request, response, next) => {
-    Foods.Model
-        .findByIdAndUpdate(request.params.id, request.body)
-        .then(edited => edited ? response.json(edited) : response.status(404).end())
-        .catch(err => next(err));
-})
-
-app.delete(foodsUri + ':id', (request, response, next) => {
-    Foods.Model
-        .findByIdAndRemove(request.params.id)
-        .then(deleted => deleted ? response.status(204).end() : response.status(404).end())
-        .catch(err => next(err));
-})
-
-//#endregion
-
-//#region "HTTP REQUESTs: DRINKS ENDPOINTS"
-
-app.get(drinksUri, (request, response, next) => {
-    Drinks.Model
-        .find({})
-        .sort({category: 'asc', title: 'asc'})
-        .then(found => response.json(found))
-        .catch(err => next(err))
-});
-
-app.get(drinksUri + ':id', (request, response, next) => {
-    Drinks.Model
-        .findOne({_id: request.params.id})
-        .then(found => found ? response.json(found) : response.status(404).end())
-        .catch(err => next(err));
-})
-
-app.post(drinksUri, (request, response, next) => {
-    (new Drinks.Model(request.body))
-        .save()
-        .then(posted => response.json(posted))
-        .catch(err => next(err));
-})
-
-app.put(drinksUri + ':id', (request, response, next) => {
-    Drinks.Model
-        .findByIdAndUpdate(request.params.id, request.body)
-        .then(edited => edited ? response.json(edited) : response.status(404).end())
-        .catch(err => next(err));
-})
-
-app.delete(drinksUri + ':id', (request, response, next) => {
-    Drinks.Model
-        .findByIdAndRemove(request.params.id)
-        .then(deleted => deleted ? response.status(204).end() : response.status(404).end())
-        .catch(err => next(err));
-})
-
-//#endregion
-
-//#region "HTTP REQUESTs: RESTAURANTMENU ENDPOINTS"
-
-app.get(menuUri + ':id', (request, response, next) => {
-    RestaurantMenu.Model
-        .findOne({_id: request.params.id})
-        .then(fd => fd ? response.json(fd) : response.status(404).end())
-        .catch(err => next(err));
-})
-
-app.post(menuUri, (request, response, next) => {
-    RestaurantMenu.Model
-        .findByIdAndUpdate("template", request.body)
-        .then(posted => response.json(posted))
-        .catch(err => next(err));
-})
-
-//#endregion
-
-//#region "MIDDLEWARE pt2"
-
-/** UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) */
-const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' });
-};
+/** 
+ * UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) 
+ */
+const unknownEndpoint = (request, response) => response.status(404).send({ error: "unknown endpoint" });
 app.use(unknownEndpoint);
 
-
-/** REQUEST ERROR HANDLER (MIDDLEWARE) */
+/** 
+ * REQUEST ERROR HANDLER (MIDDLEWARE) 
+ */
 const cbAppError = (error, request, response) => {
     console.error(error.message)
-    if (error.name === 'CastError')
-        response.status(400).send({ error: 'malformatted id' });
-    else if (error.name === 'ValidationError')
+    if (error.name === "CastError")
+        response.status(400).send({ error: "malformatted id" });
+    else if (error.name === "ValidationError")
         response.status(400).send({ error: error.message });
-
-    response.status(500).end();
-    // next(error)
+    else response.status(500).end();
 }
+
 app.use(cbAppError)
 
-//#endregion
 
-// REST API SERVER LISTENER
-const PORT = global_variables.port || 3001;
-app.listen(PORT);
+// REST API SERVER-LISTENER
+app.listen(port);

@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+"use strict";
+
+import mongoose  from "mongoose";
 
 /**
  * Schema and Model operations for Foods
@@ -40,7 +42,7 @@ const mongoose = require('mongoose');
 
             Foods.Schema = new mongoose.Schema(schemaDefintion);
 
-            Foods.Schema.set('toJSON', {
+            Foods.Schema.set("toJSON", {
                 transform: (document, returnedObj) => {
                     delete returnedObj.__v
                 }
@@ -49,9 +51,31 @@ const mongoose = require('mongoose');
 
         /** IIFE: Init the Model */
         (function initModel() {
-            Foods.Model = mongoose.model('foods', Foods.Schema);
+            Foods.Model = mongoose.model("foods", Foods.Schema);
         })(); 
+    }
+
+    static getAll() {
+        return Foods.Model
+            .find({})
+            .sort({category: "asc", title: "asc"});
+    }
+
+    static getOne(_id) {
+        return Foods.Model.findOne({ _id });
+    }
+
+    static postOne(data) {
+        return (new Foods.Model(data)).save();
+    }
+
+    static putOne(_id, data) {
+        return Foods.Model.findByIdAndUpdate(_id, data);
+    }
+
+    static deleteOne(_id) {
+        return Foods.Model.findByIdAndRemove(_id);
     }
 }
 
-module.exports = { Foods };
+export default Foods;

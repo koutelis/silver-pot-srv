@@ -1,4 +1,7 @@
-const mongoose = require('mongoose');
+"use strict";
+
+import mongoose  from "mongoose";
+import defaults from "../config.js";
 
 /**
  * Schema and Model operations for Drinks
@@ -7,6 +10,9 @@ class Drinks {
 
     static Schema;
     static Model;
+
+    static apiUri = defaults.drinksUri;
+    static collectionName = "drinks";
 
     static {
         /** IIFE: Init the Schema */
@@ -33,7 +39,7 @@ class Drinks {
 
             Drinks.Schema = new mongoose.Schema(schemaDefintion);
 
-            Drinks.Schema.set('toJSON', {
+            Drinks.Schema.set("toJSON", {
                 transform: (document, returnedObj) => {
                     delete returnedObj.__v
                 }
@@ -42,9 +48,31 @@ class Drinks {
 
         /** IIFE: Init the Model */
         (function initModel() {
-            Drinks.Model = mongoose.model('drinks', Drinks.Schema);
+            Drinks.Model = mongoose.model(Drinks.collectionName, Drinks.Schema);
         })(); 
+    }
+
+    static getAll() {
+        return Drinks.Model
+            .find({})
+            .sort({category: "asc", title: "asc"});
+    }
+
+    static getOne(_id) {
+        return Drinks.Model.findOne({ _id });
+    }
+
+    static postOne(data) {
+        return (new Drinks.Model(data)).save();
+    }
+
+    static putOne(_id, data) {
+        return Drinks.Model.findByIdAndUpdate(_id, data);
+    }
+
+    static deleteOne(_id) {
+        return Drinks.Model.findByIdAndRemove(_id);
     }
 }
 
-module.exports = { Drinks };
+export default Drinks;

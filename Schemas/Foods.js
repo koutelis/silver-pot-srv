@@ -22,13 +22,13 @@ import mongoose  from "mongoose";
                 addons: [
                     {
                         name: {type: String, required: true}, 
-                        price: {type: Number, required: true}  // extra cost (added to basePrice)
+                        price: {type: Number}  // extra cost (added to basePrice)
                     }
                 ],
                 removables: [
                     {
                         name: {type: String, required: true}, 
-                        price: {type: Number, required: true}  // discount (subtracted from basePrice)
+                        price: {type: Number}  // discount (subtracted from basePrice)
                     }
                 ],
                 timeRanges: [

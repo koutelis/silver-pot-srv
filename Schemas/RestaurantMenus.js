@@ -9,6 +9,7 @@ import mongoose  from "mongoose";
 
     static Schema;
     static Model;
+    static collectionName = "restaurantmenus";
 
     static {
 
@@ -32,7 +33,7 @@ import mongoose  from "mongoose";
 
         /** IIFE: Init the Model */
         (function initModel() {
-            RestaurantMenus.Model = mongoose.model("restaurantmenus", RestaurantMenus.Schema);
+            RestaurantMenus.Model = mongoose.model(RestaurantMenus.collectionName, RestaurantMenus.Schema);
         })(); 
     }
 

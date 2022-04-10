@@ -9,6 +9,7 @@ import mongoose  from "mongoose";
 
     static Schema;
     static Model;
+    static collectionName = "foods";
 
     static {
 
@@ -16,7 +17,7 @@ import mongoose  from "mongoose";
         (function initSchema() {
             const schemaDefintion = {
                 category: {type: String, required: true},
-                title: {type: String, required: true, unique: true},
+                name: {type: String, required: true, unique: true},
                 description: {type: String},
                 basePrice: {type: Number, required: true},
                 addons: [
@@ -51,14 +52,14 @@ import mongoose  from "mongoose";
 
         /** IIFE: Init the Model */
         (function initModel() {
-            Foods.Model = mongoose.model("foods", Foods.Schema);
+            Foods.Model = mongoose.model(Foods.collectionName, Foods.Schema);
         })(); 
     }
 
     static getAll() {
         return Foods.Model
             .find({})
-            .sort({category: "asc", title: "asc"});
+            .sort({category: "asc", name: "asc"});
     }
 
     static getOne(_id) {

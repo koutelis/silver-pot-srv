@@ -4,10 +4,10 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import MongoManager from "./mongodb.js";
-import defaults from "./config.js";
+import config from "./config.js";
 
 const app = express();
-const { drinksUri, foodsUri, menusUri, port } = defaults;
+const { drinksUri, foodsUri, menusUri, port } = config;
 const dbManager = new MongoManager();
 dbManager.connect();
 

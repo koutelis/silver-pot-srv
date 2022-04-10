@@ -1,7 +1,6 @@
 "use strict";
 
 import mongoose  from "mongoose";
-import defaults from "../config.js";
 
 /**
  * Schema and Model operations for Drinks
@@ -10,8 +9,6 @@ class Drinks {
 
     static Schema;
     static Model;
-
-    static apiUri = defaults.drinksUri;
     static collectionName = "drinks";
 
     static {
@@ -19,7 +16,7 @@ class Drinks {
         (function initSchema() {
             const schemaDefintion = {
                 category: {type: String, required: true},
-                title: {type: String, required: true, unique: true},
+                name: {type: String, required: true, unique: true},
                 description: {type: String},
                 basePrice: {type: Number},
                 sizes: [  // if !null, sizes override the basePrice
@@ -55,7 +52,7 @@ class Drinks {
     static getAll() {
         return Drinks.Model
             .find({})
-            .sort({category: "asc", title: "asc"});
+            .sort({category: "asc", name: "asc"});
     }
 
     static getOne(_id) {

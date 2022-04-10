@@ -1,15 +1,17 @@
 "use strict";
 
 import mongoose from "mongoose";
-import defaults from "./config.js";
+import config from "./config.js";
 import Foods from "./Schemas/Foods.js";
 import Drinks from "./Schemas/Drinks.js";
+import Orders from "./Schemas/Orders.js";
 import RestaurantMenus from "./Schemas/RestaurantMenus.js";
 
 const schemas = {
-    [defaults.foodsUri]: Foods,
-    [defaults.drinksUri]: Drinks,
-    [defaults.menusUri]: RestaurantMenus
+    [config.foodsUri]: Foods,
+    [config.drinksUri]: Drinks,
+    [config.ordersUri]: Orders,
+    [config.menusUri]: RestaurantMenus
 }
 
 /**
@@ -19,7 +21,7 @@ class MongoManager {
 
     connect = () => {
         mongoose.connect(
-            defaults.mongoUri,
+            config.mongoUri,
             {
                 useNewUrlParser: true, 
                 useUnifiedTopology: true

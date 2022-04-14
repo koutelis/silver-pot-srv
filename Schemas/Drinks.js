@@ -70,6 +70,13 @@ class Drinks {
     static deleteOne(_id) {
         return Drinks.Model.findByIdAndRemove(_id);
     }
+
+    static getAllCategorized() {
+        const sortByName = { $sort: { name : 1 } };
+        const group = { $group: { _id: "$category", items: { $push: "$$ROOT" } } };
+        const sortByCategory = { $sort: { _id : 1 } };
+        return Drinks.Model.aggregate([ sortByName, group, sortByCategory ]);
+    }
 }
 
 export default Drinks;

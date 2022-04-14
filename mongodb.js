@@ -76,6 +76,27 @@ class MongoManager {
             .then(deleted => deleted ? response.status(204).end() : response.status(404).end())
             .catch(err => next(err));
     }
+
+    drinksGroupedByCategory = (request, response, next) => {
+        Drinks
+            .getAllCategorized()
+            .then(found => response.json(found))
+            .catch(err => next(err))
+    }
+
+    async _restoreTemplate() {
+        // grab the first food from each category and convert to object
+        const fetchedFoods = await Foods.getAllCategorized();
+        const foods = {};
+        fetchedFoods.forEach(elem => foods[elem._id] = [elem.items[0]]);
+
+        // convert all drinks from array to object
+        const fetchedDrinks = await Drinks.getAllCategorized();
+        const drinks = {};
+        fetchedDrinks.forEach(elem => drinks[elem._id] = elem.items);
+
+        RestaurantMenus.Model.postOne( { _id: "template", date: null, foods, drinks } );
+    }
 }
 
 export default MongoManager;

@@ -16,10 +16,11 @@ import mongoose  from "mongoose";
         /** IIFE: Init the Schema */
         (function initSchema() {
             const schemaDefintion = {
-                _id: String,
-                date: String,
-                fontSize: Number,
-                items: {}
+                _id: {type: String, required: true, unique: true},
+                date: {type: String},
+                fontSize: {type: Number},
+                foods: {},
+                drinks: {}
             }
 
             RestaurantMenus.Schema = new mongoose.Schema(schemaDefintion);
@@ -48,6 +49,7 @@ import mongoose  from "mongoose";
     static putOne(_id, data) {
         return RestaurantMenus.Model.findByIdAndUpdate(_id, data);
     }
+
 }
 
 export default RestaurantMenus;

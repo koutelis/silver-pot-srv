@@ -77,6 +77,13 @@ import mongoose  from "mongoose";
     static deleteOne(_id) {
         return Foods.Model.findByIdAndRemove(_id);
     }
-}
 
+    static getAllCategorized() {
+        const sortByName = { $sort: { name : 1 } };
+        const group = { $group: { _id: "$category", items: { $push: "$$ROOT" } } };
+        const sortByCategory = { $sort: { _id : 1 } };
+        return Foods.Model.aggregate([ sortByName, group, sortByCategory ]);
+    }
+}
+// firstSale: { $first: "$date" }
 export default Foods;

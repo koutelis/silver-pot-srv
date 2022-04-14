@@ -7,7 +7,7 @@ import MongoManager from "./mongodb.js";
 import config from "./config.js";
 
 const app = express();
-const { drinksUri, foodsUri, menusUri, port } = config;
+const { drinksUri, drinksCategorizedUri, foodsUri, menusUri, port } = config;
 const dbManager = new MongoManager();
 dbManager.connect();
 
@@ -33,9 +33,11 @@ app.get(drinksUri + ":id", (request, response, next) => dbManager.schemaGetOne(d
 app.put(drinksUri + ":id", (request, response, next) => dbManager.schemaPutOne(drinksUri, request, response, next));
 app.post(drinksUri, (request, response, next) => dbManager.schemaPostOne(drinksUri, request, response, next));
 app.delete(drinksUri + ":id", (request, response, next) => dbManager.schemaDeleteOne(drinksUri, request, response, next));
+app.get(drinksCategorizedUri, (request, response, next) => dbManager.drinksGroupedByCategory(request, response, next));
 
 app.get(menusUri + ":id", (request, response, next) => dbManager.schemaGetOne(menusUri, request, response, next));
 app.put(menusUri + ":id", (request, response, next) => dbManager.schemaPutOne(menusUri, request, response, next));
+
 
 /** 
  * UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) 

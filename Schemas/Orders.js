@@ -52,7 +52,8 @@ import mongoose  from "mongoose";
                             price: {type: Number, required: true}
                         }
                     }
-                ]
+                ],
+                totalCost: {type: Number, required: true}
             }
 
             Orders.Schema = new mongoose.Schema(schemaDefintion);

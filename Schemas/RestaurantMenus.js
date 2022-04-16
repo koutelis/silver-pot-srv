@@ -16,7 +16,7 @@ import mongoose  from "mongoose";
         /** IIFE: Init the Schema */
         (function initSchema() {
             const schemaDefintion = {
-                _id: {type: String, required: true, unique: true},
+                _id: {type: String},
                 date: {type: String},
                 fontSize: {type: Number},
                 foods: {},

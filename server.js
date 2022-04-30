@@ -38,7 +38,6 @@ app.get(drinksCategorizedUri, (request, response, next) => dbManager.drinksGroup
 app.get(menusUri + ":id", (request, response, next) => dbManager.schemaGetOne(menusUri, request, response, next));
 app.put(menusUri + ":id", (request, response, next) => dbManager.schemaPutOne(menusUri, request, response, next));
 
-
 /** 
  * UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) 
  */
@@ -58,7 +57,6 @@ const cbAppError = (error, request, response) => {
 }
 
 app.use(cbAppError)
-
 
 // REST API SERVER-LISTENER
 app.listen(port);

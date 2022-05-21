@@ -32,6 +32,7 @@ import mongoose  from "mongoose";
                         price: {type: Number}  // discount (subtracted from basePrice)
                     }
                 ],
+                posDirections: {type: String}, 
                 timeRanges: [
                     {
                         day: Number,      // from [1, 2, 3, 4, 5, 6, 7]   each number corresponds to a day of the week, starting Monday
@@ -85,5 +86,5 @@ import mongoose  from "mongoose";
         return Foods.Model.aggregate([ sortByName, group, sortByCategory ]);
     }
 }
-// firstSale: { $first: "$date" }
+
 export default Foods;

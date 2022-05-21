@@ -1,13 +1,15 @@
 "use strict";
 
 import express from "express";
+import { Server as SocketServer } from "socket.io";
 import cors from "cors";
 import morgan from "morgan";
 import MongoManager from "./mongodb.js";
 import config from "./config.js";
 
 const app = express();
-const { drinksUri, drinksCategorizedUri, foodsUri, menusUri, port } = config;
+
+const { drinksUri, drinksCategorizedUri, foodsUri, menusUri, ordersUri, port } = config;
 const dbManager = new MongoManager();
 dbManager.connect();
 
@@ -37,6 +39,14 @@ app.get(drinksCategorizedUri, (request, response, next) => dbManager.drinksGroup
 
 app.get(menusUri + ":id", (request, response, next) => dbManager.schemaGetOne(menusUri, request, response, next));
 app.put(menusUri + ":id", (request, response, next) => dbManager.schemaPutOne(menusUri, request, response, next));
+app.delete(menusUri, (request, response, next) => dbManager.deletePastMenus(request, response, next));
+
+app.get(ordersUri, (request, response, next) => dbManager.schemaGetAll(ordersUri, request, response, next));
+app.get(ordersUri + ":id", (request, response, next) => dbManager.schemaGetOne(ordersUri, request, response, next));
+app.get(ordersUri + "table/:id", (request, response, next) => dbManager.orderByTable(request, response, next));
+app.post(ordersUri, (request, response, next) => dbManager.schemaPostOne(ordersUri, request, response, next));
+app.put(ordersUri + ":id", (request, response, next) => dbManager.schemaPutOne(ordersUri, request, response, next));
+app.delete(ordersUri + ":id", (request, response, next) => dbManager.schemaDeleteOne(ordersUri, request, response, next));
 
 /** 
  * UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) 
@@ -59,4 +69,14 @@ const cbAppError = (error, request, response) => {
 app.use(cbAppError)
 
 // REST API SERVER-LISTENER
-app.listen(port);
+const server = app.listen(port);
+
+// WEBSOCKET ON SAME SERVER
+const io = new SocketServer(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on("connection", (socket) => dbManager.setSocket(socket));

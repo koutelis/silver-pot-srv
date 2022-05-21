@@ -49,7 +49,6 @@ import mongoose  from "mongoose";
     static putOne(_id, data) {
         return RestaurantMenus.Model.findByIdAndUpdate(_id, data);
     }
-
 }
 
 export default RestaurantMenus;

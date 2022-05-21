@@ -16,12 +16,12 @@ import mongoose  from "mongoose";
         /** IIFE: Init the Schema */
         (function initSchema() {
             const schemaDefintion = {
-                timestamp: {type: Date, required: true},
+                time: {type: String, required: true},
                 table: {type: String, required: true},
                 foods: [
                     {
                         category: {type: String, required: true},
-                        name: {type: String, required: true, unique: true},
+                        name: {type: String, required: true},
                         description: {type: String},
                         totalPrice: {type: Number, required: true},  // basePrice + addons prices - removables prices
                         basePrice: {type: Number, required: true},
@@ -37,23 +37,31 @@ import mongoose  from "mongoose";
                                 price: {type: Number, required: true}  // discount (subtracted from basePrice)
                             }
                         ],
-                        comments: {type: String}
+                        posDirections: {type: String}, 
+                        comments: {type: String},
+                        complete: {type: Boolean, required: true}
                     }
                 ],
                 drinks: [
                     {
                         category: {type: String, required: true},
-                        name: {type: String, required: true, unique: true},
+                        name: {type: String, required: true},
                         description: {type: String},
-                        totalPrice: {type: String, required: true},  // COALESCE(size price, basePrice)
+                        totalPrice: {type: Number, required: true},  // COALESCE(size price, basePrice)
                         basePrice: {type: Number, required: true},
                         size: {  // if !null, overrides the basePrice
                             name: {type: String, required: true},
                             price: {type: Number, required: true}
-                        }
+                        },
+                        posDirections: {type: String}, 
+                        comments: {type: String},
+                        complete: {type: Boolean, required: true}
                     }
                 ],
-                totalCost: {type: Number, required: true}
+                totalCost: {type: Number, required: true},
+                kitchenComplete: {type: Boolean},
+                barComplete: {type: Boolean},
+                paymentComplete: {type: Boolean}
             }
 
             Orders.Schema = new mongoose.Schema(schemaDefintion);
@@ -74,11 +82,15 @@ import mongoose  from "mongoose";
     static getAll() {
         return Orders.Model
             .find({})
-            .sort({timestamp: "asc"});
+            .sort({time: "asc"});
     }
 
     static getOne(_id) {
         return Orders.Model.findOne({ _id });
+    }
+
+    static getByTable(tableNum) {
+        return Orders.Model.findOne({ table: tableNum });
     }
 
     static postOne(data) {

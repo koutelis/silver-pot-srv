@@ -13,29 +13,27 @@ import mongoose  from "mongoose";
 
     static {
 
-        /** IIFE: Init the Schema */
-        (function initSchema() {
-            const schemaDefintion = {
-                _id: {type: String},
-                date: {type: String},
-                fontSize: {type: Number},
-                foods: {},
-                drinks: {}
+        //////////////////
+        // Init the Schema
+        const schemaDefintion = {
+            _id: {type: String},
+            date: {type: String},
+            fontSize: {type: Number},
+            foods: {},
+            drinks: {}
+        }
+
+        RestaurantMenus.Schema = new mongoose.Schema(schemaDefintion);
+
+        RestaurantMenus.Schema.set("toJSON", {
+            transform: (document, returnedObj) => {
+                delete returnedObj.__v
             }
+        });
 
-            RestaurantMenus.Schema = new mongoose.Schema(schemaDefintion);
-
-            RestaurantMenus.Schema.set("toJSON", {
-                transform: (document, returnedObj) => {
-                    delete returnedObj.__v
-                }
-            });
-        })();
-
-        /** IIFE: Init the Model */
-        (function initModel() {
-            RestaurantMenus.Model = mongoose.model(RestaurantMenus.collectionName, RestaurantMenus.Schema);
-        })(); 
+        /////////////////
+        // Init the Model
+        RestaurantMenus.Model = mongoose.model(RestaurantMenus.collectionName, RestaurantMenus.Schema);
     }
 
     static getOne(_id) {

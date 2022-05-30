@@ -9,7 +9,7 @@ import config from "./config.js";
 
 const app = express();
 
-const { drinksUri, drinksCategorizedUri, foodsUri, menusUri, ordersUri, port } = config;
+const { drinksUri, drinksCategorizedUri, foodsUri, menusUri, ordersUri, usersUri, port } = config;
 const dbManager = new MongoManager();
 dbManager.connect();
 
@@ -23,6 +23,8 @@ app.use(cors());
 morgan.token("postBody", req => (req.method === "POST") ? JSON.stringify(req.body) : "");
 const requestLogger = morgan(":method :url :status :res[content-length] - :response-time ms :postBody");
 app.use(requestLogger);
+
+// HTTP REQUESTS
 
 app.get(foodsUri, (request, response, next) => dbManager.schemaGetAll(foodsUri, request, response, next));
 app.get(foodsUri + ":id", (request, response, next) => dbManager.schemaGetOne(foodsUri, request, response, next));
@@ -47,6 +49,12 @@ app.get(ordersUri + "table/:id", (request, response, next) => dbManager.orderByT
 app.post(ordersUri, (request, response, next) => dbManager.schemaPostOne(ordersUri, request, response, next));
 app.put(ordersUri + ":id", (request, response, next) => dbManager.schemaPutOne(ordersUri, request, response, next));
 app.delete(ordersUri + ":id", (request, response, next) => dbManager.schemaDeleteOne(ordersUri, request, response, next));
+
+app.get(usersUri, (request, response, next) => dbManager.schemaGetAll(usersUri, request, response, next));
+app.get(usersUri + ":id", (request, response, next) => dbManager.schemaGetOne(usersUri, request, response, next));
+app.put(usersUri + ":id", (request, response, next) => dbManager.schemaPutOne(usersUri, request, response, next));
+app.post(usersUri, (request, response, next) => dbManager.schemaPostOne(usersUri, request, response, next));
+app.delete(usersUri + ":id", (request, response, next) => dbManager.schemaDeleteOne(usersUri, request, response, next));
 
 /** 
  * UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) 

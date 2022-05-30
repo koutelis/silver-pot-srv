@@ -12,42 +12,40 @@ class Drinks {
     static collectionName = "drinks";
 
     static {
-        /** IIFE: Init the Schema */
-        (function initSchema() {
-            const schemaDefintion = {
-                category: {type: String, required: true},
-                name: {type: String, required: true, unique: true},
-                description: {type: String},
-                basePrice: {type: Number},
-                sizes: [  // if !null, sizes override the basePrice
-                    {
-                        name: {type: String, required: true}, 
-                        price: {type: Number, required: true}
-                    }
-                ],
-                posDirections: {type: String},
-                timeRanges: [
-                    {
-                        day: Number,      // from [1, 2, 3, 4, 5, 6, 7]   each number corresponds to a day of the week, starting Monday
-                        startAt: String,  // format: HH:MM  24h
-                        endAt: String     // format: HH:MM  24h
-                    }
-                ]
-            }
-
-            Drinks.Schema = new mongoose.Schema(schemaDefintion);
-
-            Drinks.Schema.set("toJSON", {
-                transform: (document, returnedObj) => {
-                    delete returnedObj.__v
+        //////////////////
+        // Init the Schema
+        const schemaDefintion = {
+            category: {type: String, required: true},
+            name: {type: String, required: true, unique: true},
+            description: {type: String},
+            basePrice: {type: Number},
+            sizes: [  // if !null, sizes override the basePrice
+                {
+                    name: {type: String, required: true}, 
+                    price: {type: Number, required: true}
                 }
-            });
-        })();
+            ],
+            posDirections: {type: String},
+            timeRanges: [
+                {
+                    day: Number,      // from [1, 2, 3, 4, 5, 6, 7]   each number corresponds to a day of the week, starting Monday
+                    startAt: String,  // format: HH:MM  24h
+                    endAt: String     // format: HH:MM  24h
+                }
+            ]
+        }
 
-        /** IIFE: Init the Model */
-        (function initModel() {
-            Drinks.Model = mongoose.model(Drinks.collectionName, Drinks.Schema);
-        })(); 
+        Drinks.Schema = new mongoose.Schema(schemaDefintion);
+
+        Drinks.Schema.set("toJSON", {
+            transform: (document, returnedObj) => {
+                delete returnedObj.__v
+            }
+        });
+
+        /////////////////
+        // Init the Model
+        Drinks.Model = mongoose.model(Drinks.collectionName, Drinks.Schema);
     }
 
     static getAll() {

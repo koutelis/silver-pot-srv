@@ -9,7 +9,7 @@ import config from "./config.js";
 
 const app = express();
 
-const { drinksUri, drinksCategorizedUri, foodsUri, menusUri, ordersUri, usersUri, port } = config;
+const { baseUri, drinksUri, drinksCategorizedUri, foodsUri, menusUri, ordersUri, usersUri, port } = config;
 const dbManager = new MongoManager();
 dbManager.connect();
 
@@ -25,6 +25,8 @@ const requestLogger = morgan(":method :url :status :res[content-length] - :respo
 app.use(requestLogger);
 
 // HTTP REQUESTS
+
+app.get(baseUri, (request, response, next) => dbManager.baseGet(request, response, next));
 
 app.get(foodsUri, (request, response, next) => dbManager.schemaGetAll(foodsUri, request, response, next));
 app.get(foodsUri + ":id", (request, response, next) => dbManager.schemaGetOne(foodsUri, request, response, next));

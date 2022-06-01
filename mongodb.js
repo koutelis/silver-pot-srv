@@ -36,6 +36,14 @@ class MongoManager {
         mongoose.disconnect();
     };
 
+    baseGet = async (request, response, next) => {
+        try {
+            return response.json(true);
+        } catch (err) {
+            next(err);
+        }
+    };
+
     schemaGetAll = async (endpoint, request, response, next) => {
         try {
             const found = await schemas[endpoint].getAll();

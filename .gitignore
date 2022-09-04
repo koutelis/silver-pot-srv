@@ -20,4 +20,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # include when pushing to heroku:
-.env
+# .env

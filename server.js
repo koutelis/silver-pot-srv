@@ -7,8 +7,8 @@ import morgan from "morgan";
 import MongoManager from "./mongodb.js";
 import config from "./config.js";
 
+// INIT
 const app = express();
-
 const { baseUri, drinksUri, drinksCategorizedUri, foodsUri, menusUri, ordersUri, usersUri, port } = config;
 const dbManager = new MongoManager();
 dbManager.connect();
@@ -61,7 +61,9 @@ app.delete(usersUri + ":id", (request, response, next) => dbManager.schemaDelete
 /** 
  * UNKNOWN ENDPOINT FOR REQUESTS (MIDDLEWARE HANDLER) 
  */
-const unknownEndpoint = (request, response) => response.status(404).send({ error: "unknown endpoint" });
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: "unknown endpoint" });
+};
 app.use(unknownEndpoint);
 
 /** 
@@ -74,9 +76,8 @@ const cbAppError = (error, request, response) => {
     else if (error.name === "ValidationError")
         response.status(400).send({ error: error.message });
     else response.status(500).end();
-}
-
-app.use(cbAppError)
+};
+app.use(cbAppError);
 
 // REST API SERVER-LISTENER
 const server = app.listen(port);
